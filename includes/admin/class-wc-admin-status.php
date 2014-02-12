@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Status' ) ) :
-
 /**
  * WC_Admin_Status Class
  */
@@ -20,7 +18,7 @@ class WC_Admin_Status {
 	/**
 	 * Handles output of the reports page in admin.
 	 */
-	public function output() {
+	public static function output() {
 		$current_tab = ! empty( $_REQUEST['tab'] ) ? sanitize_title( $_REQUEST['tab'] ) : 'status';
 
 		include_once( 'views/html-admin-page-status.php' );
@@ -29,7 +27,7 @@ class WC_Admin_Status {
 	/**
 	 * Handles output of report
 	 */
-	public function status_report() {
+	public static function status_report() {
 		global $woocommerce, $wpdb;
 
 		include_once( 'views/html-admin-page-status-report.php' );
@@ -38,10 +36,10 @@ class WC_Admin_Status {
 	/**
 	 * Handles output of tools
 	 */
-	public function status_tools() {
+	public static function status_tools() {
 		global $woocommerce, $wpdb;
 
-		$tools = $this->get_tools();
+		$tools = self::get_tools();
 
 		if ( ! empty( $_GET['action'] ) && ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'debug_action' ) ) {
 
@@ -95,9 +93,8 @@ class WC_Admin_Status {
 				break;
 				case "reset_roles" :
 					// Remove then re-add caps and roles
-					$installer = include( WC()->plugin_path() . '/includes/class-wc-install.php' );
-					$installer->remove_roles();
-					$installer->create_roles();
+					WC_Install::remove_roles();
+					WC_Install::create_roles();
 
 					echo '<div class="updated"><p>' . __( 'Roles successfully reset', 'woocommerce' ) . '</p></div>';
 				break;
@@ -167,7 +164,7 @@ class WC_Admin_Status {
 	 *
 	 * @return array of tools
 	 */
-	public function get_tools() {
+	public static function get_tools() {
 		return apply_filters( 'woocommerce_debug_tools', array(
 			'clear_transients' => array(
 				'name'		=> __( 'WC Transients','woocommerce'),
@@ -214,7 +211,7 @@ class WC_Admin_Status {
 	 * @param string $file Path to the file
 	 * @param array $all_headers List of headers, in the format array('HeaderKey' => 'Header Name')
 	 */
-	public function get_file_version( $file ) {
+	public static function get_file_version( $file ) {
 		// We don't need to write to the file, so just open for reading.
 		$fp = fopen( $file, 'r' );
 
@@ -241,14 +238,14 @@ class WC_Admin_Status {
  	 * @param string $template_path
  	 * @return array
 	 */
-	public function scan_template_files( $template_path ) {
+	public static function scan_template_files( $template_path ) {
 		$files         = scandir( $template_path );
 		$result        = array();
 		if ( $files ) {
 			foreach ( $files as $key => $value ) {
 				if ( ! in_array( $value, array( ".",".." ) ) ) {
 					if ( is_dir( $template_path . DIRECTORY_SEPARATOR . $value ) ) {
-						$sub_files = $this->scan_template_files( $template_path . DIRECTORY_SEPARATOR . $value );
+						$sub_files = self::scan_template_files( $template_path . DIRECTORY_SEPARATOR . $value );
 						foreach ( $sub_files as $sub_file ) {
 							$result[] = $value . DIRECTORY_SEPARATOR . $sub_file;
 						}
@@ -261,7 +258,3 @@ class WC_Admin_Status {
 		return $result;
 	}
 }
-
-endif;
-
-return new WC_Admin_Status();

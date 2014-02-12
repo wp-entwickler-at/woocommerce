@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Importers' ) ) :
-
 /**
  * WC_Admin_Importers Class
  */
@@ -119,6 +117,4 @@ class WC_Admin_Importers {
 	}
 }
 
-endif;
-
-return new WC_Admin_Importers();
+new WC_Admin_Importers();

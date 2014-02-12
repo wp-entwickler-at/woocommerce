@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Help' ) ) :
-
 /**
  * WC_Admin_Help Class
  */
@@ -81,6 +79,4 @@ class WC_Admin_Help {
 
 }
 
-endif;
-
-return new WC_Admin_Help();
+new WC_Admin_Help();

@@ -11,8 +11,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Query' ) ) :
-
 /**
  * WC_Query Class
  */
@@ -816,7 +814,3 @@ class WC_Query {
 	}
 
 }
-
-endif;
-
-return new WC_Query();

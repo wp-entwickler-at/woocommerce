@@ -2,8 +2,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Email_Customer_Reset_Password' ) ) :
-
 /**
  * Customer Reset Password
  *
@@ -112,7 +110,3 @@ class WC_Email_Customer_Reset_Password extends WC_Email {
 		return ob_get_clean();
 	}
 }
-
-endif;
-
-return new WC_Email_Customer_Reset_Password();

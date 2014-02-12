@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Post_Types' ) ) :
-
 /**
  * WC_Admin_Post_Types Class
  */
@@ -35,13 +33,13 @@ class WC_Admin_Post_Types {
 	 * Conditonally load classes and functions only needed when viewing a post type.
 	 */
 	public function include_post_type_handlers() {
-		include( 'post-types/class-wc-admin-meta-boxes.php' );
-		include( 'post-types/class-wc-admin-cpt-product.php' );
-		include( 'post-types/class-wc-admin-cpt-shop_order.php' );
-		include( 'post-types/class-wc-admin-cpt-shop_coupon.php' );
+		include_once( 'post-types/class-wc-admin-meta-boxes.php' );
+		include_once( 'post-types/class-wc-admin-cpt-product.php' );
+		include_once( 'post-types/class-wc-admin-cpt-shop_order.php' );
+		include_once( 'post-types/class-wc-admin-cpt-shop_coupon.php' );
 
 		if ( ! function_exists( 'duplicate_post_plugin_activation' ) )
-			include( 'class-wc-admin-duplicate-product.php' );
+			include_once( 'class-wc-admin-duplicate-product.php' );
 	}
 
 	/**
@@ -218,6 +216,4 @@ class WC_Admin_Post_Types {
 	}
 }
 
-endif;
-
-return new WC_Admin_Post_Types();
+new WC_Admin_Post_Types();

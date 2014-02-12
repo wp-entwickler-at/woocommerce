@@ -2,8 +2,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Email_Customer_Completed_Order' ) ) :
-
 /**
  * Customer Completed Order Email
  *
@@ -185,7 +183,3 @@ class WC_Email_Customer_Completed_Order extends WC_Email {
 		);
     }
 }
-
-endif;
-
-return new WC_Email_Customer_Completed_Order();

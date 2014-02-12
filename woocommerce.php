@@ -141,6 +141,9 @@ final class WooCommerce {
 		add_action( 'init', array( 'WC_Shortcodes', 'init' ) );
 		add_action( 'after_setup_theme', array( $this, 'setup_environment' ) );
 
+		// Activation
+		register_activation_hook( __FILE__, array( 'WC_Install', 'install' ) );
+
 		// Loaded action
 		do_action( 'woocommerce_loaded' );
 	}
@@ -277,11 +280,10 @@ final class WooCommerce {
 	 * Include required core files used in admin and on the frontend.
 	 */
 	private function includes() {
-		include( 'includes/wc-core-functions.php' );
-		include( 'includes/class-wc-install.php' );
-		include( 'includes/class-wc-download-handler.php' );
-		include( 'includes/class-wc-comments.php' );
-		include( 'includes/class-wc-post-data.php' );
+		include_once( 'includes/wc-core-functions.php' );
+		include_once( 'includes/class-wc-download-handler.php' );
+		include_once( 'includes/class-wc-comments.php' );
+		include_once( 'includes/class-wc-post-data.php' );
 
 		if ( is_admin() ) {
 			include_once( 'includes/admin/class-wc-admin.php' );
@@ -296,7 +298,8 @@ final class WooCommerce {
 		}
 
 		// Query class
-		$this->query = include( 'includes/class-wc-query.php' );				// The main query class
+		include_once( 'includes/class-wc-query.php' );				// The main query class
+		$this->query = new WC_Query();
 
 		// Post types
 		include_once( 'includes/class-wc-post-types.php' );						// Registers post types

@@ -10,10 +10,9 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_CPT' ) )
-	include( 'class-wc-admin-cpt.php' );
-
-if ( ! class_exists( 'WC_Admin_CPT_Product' ) ) :
+if ( ! class_exists( 'WC_Admin_CPT' ) ) {
+	include_once( 'class-wc-admin-cpt.php' );
+}
 
 /**
  * WC_Admin_CPT_Product Class
@@ -1075,6 +1074,4 @@ class WC_Admin_CPT_Product extends WC_Admin_CPT {
 	}
 }
 
-endif;
-
-return new WC_Admin_CPT_Product();
+new WC_Admin_CPT_Product();

@@ -18,12 +18,72 @@ class WC_Admin {
 	 * Constructor
 	 */
 	public function __construct() {
+		add_action( 'admin_init', array( $this, 'install_actions' ) );
+		add_action( 'admin_init', array( $this, 'check_version' ), 5 );
 		add_action( 'init', array( $this, 'includes' ) );
 		add_action( 'current_screen', array( $this, 'conditonal_includes' ) );
 		add_action( 'admin_init', array( $this, 'prevent_admin_access' ) );
 		add_action( 'wp_ajax_page_slurp', array( 'WC_Gateway_Mijireh', 'page_slurp' ) );
 		add_action( 'admin_init', array( $this, 'preview_emails' ) );
 		add_action( 'admin_footer', 'wc_print_js', 25 );
+		add_action( 'in_plugin_update_message-woocommerce/woocommerce.php', array( 'WC_Install', 'in_plugin_update_message' ) );
+	}
+
+	/**
+	 * check_version function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function check_version() {
+		if ( ! defined( 'IFRAME_REQUEST' ) && ( get_option( 'woocommerce_version' ) != WC()->version || get_option( 'woocommerce_db_version' ) != WC()->version ) ) {
+			WC_Install::install();
+			do_action( 'woocommerce_updated' );
+		}
+	}
+
+	/**
+	 * Install actions such as installing pages when a button is clicked.
+	 */
+	public function install_actions() {
+		// Install - Add pages button
+		if ( ! empty( $_GET['install_woocommerce_pages'] ) ) {
+
+			WC_Install::create_pages();
+
+			// We no longer need to install pages
+			delete_option( '_wc_needs_pages' );
+			delete_transient( '_wc_activation_redirect' );
+
+			// What's new redirect
+			wp_redirect( admin_url( 'index.php?page=wc-about&wc-installed=true' ) );
+			exit;
+
+		// Skip button
+		} elseif ( ! empty( $_GET['skip_install_woocommerce_pages'] ) ) {
+
+			// We no longer need to install pages
+			delete_option( '_wc_needs_pages' );
+			delete_transient( '_wc_activation_redirect' );
+
+			// What's new redirect
+			wp_redirect( admin_url( 'index.php?page=wc-about' ) );
+			exit;
+
+		// Update button
+		} elseif ( ! empty( $_GET['do_update_woocommerce'] ) ) {
+
+			WC_Install::update();
+
+			// Update complete
+			delete_option( '_wc_needs_pages' );
+			delete_option( '_wc_needs_update' );
+			delete_transient( '_wc_activation_redirect' );
+
+			// What's new redirect
+			wp_redirect( admin_url( 'index.php?page=wc-about&wc-updated=true' ) );
+			exit;
+		}
 	}
 
 	/**
@@ -40,21 +100,21 @@ class WC_Admin {
 
 		// Classes we only need if the ajax is not-ajax
 		if ( ! is_ajax() ) {
-			include( 'class-wc-admin-menus.php' );
-			include( 'class-wc-admin-welcome.php' );
-			include( 'class-wc-admin-notices.php' );
-			include( 'class-wc-admin-assets.php' );
-			include( 'class-wc-admin-permalink-settings.php' );
-			include( 'class-wc-admin-editor.php' );
+			include_once( 'class-wc-admin-menus.php' );
+			include_once( 'class-wc-admin-welcome.php' );
+			include_once( 'class-wc-admin-notices.php' );
+			include_once( 'class-wc-admin-assets.php' );
+			include_once( 'class-wc-admin-permalink-settings.php' );
+			include_once( 'class-wc-admin-editor.php' );
 
 			// Help
 			if ( apply_filters( 'woocommerce_enable_admin_help_tab', true ) )
-				include( 'class-wc-admin-help.php' );
+				include_once( 'class-wc-admin-help.php' );
 		}
 
 		// Importers
 		if ( defined( 'WP_LOAD_IMPORTERS' ) )
-			include( 'class-wc-admin-importers.php' );
+			include_once( 'class-wc-admin-importers.php' );
 	}
 
 	/**
@@ -65,13 +125,13 @@ class WC_Admin {
 
 		switch ( $screen->id ) {
 			case 'dashboard' :
-				include( 'class-wc-admin-dashboard.php' );
+				include_once( 'class-wc-admin-dashboard.php' );
 			break;
 			case 'users' :
 			case 'user' :
 			case 'profile' :
 			case 'user-edit' :
-				include( 'class-wc-admin-profile.php' );
+				include_once( 'class-wc-admin-profile.php' );
 			break;
 		}
 	}
@@ -119,4 +179,4 @@ class WC_Admin {
 	}
 }
 
-return new WC_Admin();
+new WC_Admin();

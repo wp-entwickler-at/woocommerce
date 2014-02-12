@@ -2,8 +2,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Email_New_Order' ) ) :
-
 /**
  * New Order Email
  *
@@ -158,7 +156,3 @@ class WC_Email_New_Order extends WC_Email {
 		);
     }
 }
-
-endif;
-
-return new WC_Email_New_Order();

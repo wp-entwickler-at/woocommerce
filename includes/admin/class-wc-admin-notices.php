@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Notices' ) ) :
-
 /**
  * WC_Admin_Notices Class
  */
@@ -99,8 +97,8 @@ class WC_Admin_Notices {
 			return;
 		}
 
-		$status         = include( 'class-wc-admin-status.php' );
-		$core_templates = $status->scan_template_files( WC()->plugin_path() . '/templates' );
+		$status         = include_once( 'class-wc-admin-status.php' );
+		$core_templates = WC_Admin_Status::scan_template_files( WC()->plugin_path() . '/templates' );
 		$outdated       = false;
 
 		foreach ( $core_templates as $file ) {
@@ -132,6 +130,4 @@ class WC_Admin_Notices {
 	}
 }
 
-endif;
-
-return new WC_Admin_Notices();
+new WC_Admin_Notices();

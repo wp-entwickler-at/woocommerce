@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Profile' ) ) :
-
 /**
  * WC_Admin_Profile Class
  */
@@ -299,6 +297,4 @@ class WC_Admin_Profile {
 
 }
 
-endif;
-
-return new WC_Admin_Profile();
+new WC_Admin_Profile();

@@ -15,10 +15,10 @@
 	<?php
 		switch ( $current_tab ) {
 			case "tools" :
-				$this->status_tools();
+				self::status_tools();
 			break;
 			default :
-				$this->status_report();
+				self::status_report();
 			break;
 		}
 	?>

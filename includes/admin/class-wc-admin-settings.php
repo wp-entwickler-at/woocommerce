@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Settings' ) ) :
-
 /**
  * WC_Admin_Settings
  */
@@ -29,15 +27,23 @@ class WC_Admin_Settings {
 			$settings = array();
 
 			include_once( 'settings/class-wc-settings-page.php' );
+			include_once( 'settings/class-wc-settings-general.php' );
+			include_once( 'settings/class-wc-settings-products.php' );
+			include_once( 'settings/class-wc-settings-tax.php' );
+			include_once( 'settings/class-wc-settings-checkout.php' );
+			include_once( 'settings/class-wc-settings-shipping.php' );
+			include_once( 'settings/class-wc-settings-accounts.php' );
+			include_once( 'settings/class-wc-settings-emails.php' );
+			include_once( 'settings/class-wc-settings-integrations.php' );
 
-			$settings[] = include( 'settings/class-wc-settings-general.php' );
-			$settings[] = include( 'settings/class-wc-settings-products.php' );
-			$settings[] = include( 'settings/class-wc-settings-tax.php' );
-			$settings[] = include( 'settings/class-wc-settings-checkout.php' );
-			$settings[] = include( 'settings/class-wc-settings-shipping.php' );
-			$settings[] = include( 'settings/class-wc-settings-accounts.php' );
-			$settings[] = include( 'settings/class-wc-settings-emails.php' );
-			$settings[] = include( 'settings/class-wc-settings-integrations.php' );
+			$settings[] = new WC_Settings_General();
+			$settings[] = new WC_Settings_Products();
+			$settings[] = new WC_Settings_Tax();
+			$settings[] = new WC_Settings_Payment_Gateways();
+			$settings[] = new WC_Settings_Shipping();
+			$settings[] = new WC_Settings_Accounts();
+			$settings[] = new WC_Settings_Emails();
+			$settings[] = new WC_Settings_Integrations();
 
 			self::$settings = apply_filters( 'woocommerce_get_settings_pages', $settings );
 		}
@@ -794,5 +800,3 @@ class WC_Admin_Settings {
 		}
 	}
 }
-
-endif;

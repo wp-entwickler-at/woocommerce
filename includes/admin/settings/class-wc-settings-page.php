@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Settings_Page' ) ) :
-
 /**
  * WC_Settings_Page
  */
@@ -90,5 +88,3 @@ class WC_Settings_Page {
 	    	do_action( 'woocommerce_update_options_' . $this->id . '_' . $current_section );
 	}
 }
-
-endif;

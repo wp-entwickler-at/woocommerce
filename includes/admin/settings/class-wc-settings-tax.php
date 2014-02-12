@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Settings_Tax' ) ) :
-
 /**
  * WC_Settings_Tax
  */
@@ -729,7 +727,3 @@ class WC_Settings_Tax extends WC_Settings_Page {
 	}
 
 }
-
-endif;
-
-return new WC_Settings_Tax();

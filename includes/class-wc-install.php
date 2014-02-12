@@ -10,89 +10,18 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Install' ) ) :
-
 /**
  * WC_Install Class
  */
 class WC_Install {
 
 	/**
-	 * Hook in tabs.
-	 */
-	public function __construct() {
-		register_activation_hook( WC_PLUGIN_FILE, array( $this, 'install' ) );
-
-		add_action( 'admin_init', array( $this, 'install_actions' ) );
-		add_action( 'admin_init', array( $this, 'check_version' ), 5 );
-		add_action( 'in_plugin_update_message-woocommerce/woocommerce.php', array( $this, 'in_plugin_update_message' ) );
-	}
-
-	/**
-	 * check_version function.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function check_version() {
-		if ( ! defined( 'IFRAME_REQUEST' ) && ( get_option( 'woocommerce_version' ) != WC()->version || get_option( 'woocommerce_db_version' ) != WC()->version ) ) {
-			$this->install();
-
-			do_action( 'woocommerce_updated' );
-		}
-	}
-
-	/**
-	 * Install actions such as installing pages when a button is clicked.
-	 */
-	public function install_actions() {
-		// Install - Add pages button
-		if ( ! empty( $_GET['install_woocommerce_pages'] ) ) {
-
-			self::create_pages();
-
-			// We no longer need to install pages
-			delete_option( '_wc_needs_pages' );
-			delete_transient( '_wc_activation_redirect' );
-
-			// What's new redirect
-			wp_redirect( admin_url( 'index.php?page=wc-about&wc-installed=true' ) );
-			exit;
-
-		// Skip button
-		} elseif ( ! empty( $_GET['skip_install_woocommerce_pages'] ) ) {
-
-			// We no longer need to install pages
-			delete_option( '_wc_needs_pages' );
-			delete_transient( '_wc_activation_redirect' );
-
-			// What's new redirect
-			wp_redirect( admin_url( 'index.php?page=wc-about' ) );
-			exit;
-
-		// Update button
-		} elseif ( ! empty( $_GET['do_update_woocommerce'] ) ) {
-
-			$this->update();
-
-			// Update complete
-			delete_option( '_wc_needs_pages' );
-			delete_option( '_wc_needs_update' );
-			delete_transient( '_wc_activation_redirect' );
-
-			// What's new redirect
-			wp_redirect( admin_url( 'index.php?page=wc-about&wc-updated=true' ) );
-			exit;
-		}
-	}
-
-	/**
 	 * Install WC
 	 */
-	public function install() {
-		$this->create_options();
-		$this->create_tables();
-		$this->create_roles();
+	public static function install() {
+		self::create_options();
+		self::create_tables();
+		self::create_roles();
 
 		// Register post types
 		include_once( 'class-wc-post-types.php' );
@@ -103,10 +32,10 @@ class WC_Install {
 		WC()->query->init_query_vars();
 		WC()->query->add_endpoints();
 
-		$this->create_terms();
-		$this->create_cron_jobs();
-		$this->create_files();
-		$this->create_css_from_less();
+		self::create_terms();
+		self::create_cron_jobs();
+		self::create_files();
+		self::create_css_from_less();
 
 		// Clear transient cache
 		wc_delete_product_transients();
@@ -139,7 +68,7 @@ class WC_Install {
 	/**
 	 * Handle updates
 	 */
-	public function update() {
+	public static function update() {
 		// Do updates
 		$current_db_version = get_option( 'woocommerce_db_version' );
 
@@ -182,7 +111,7 @@ class WC_Install {
 	/**
 	 * Create cron jobs (clear them first)
 	 */
-	private function create_cron_jobs() {
+	private static function create_cron_jobs() {
 		// Cron jobs
 		wp_clear_scheduled_hook( 'woocommerce_scheduled_sales' );
 		wp_clear_scheduled_hook( 'woocommerce_cancel_unpaid_orders' );
@@ -246,7 +175,7 @@ class WC_Install {
 	 * @access public
 	 * @return void
 	 */
-	private function create_terms() {
+	private static function create_terms() {
 
 		$taxonomies = array(
 			'product_type' => array(
@@ -282,7 +211,7 @@ class WC_Install {
 	 *
 	 * @access public
 	 */
-	function create_options() {
+	public static function create_options() {
 		// Include settings so that we can run through defaults
 		include_once( 'admin/class-wc-admin-settings.php' );
 
@@ -324,7 +253,7 @@ class WC_Install {
 	 * @access public
 	 * @return void
 	 */
-	private function create_tables() {
+	private static function create_tables() {
 		global $wpdb, $woocommerce;
 
 		$wpdb->hide_errors();
@@ -429,7 +358,7 @@ class WC_Install {
 	/**
 	 * Create roles and capabilities
 	 */
-	public function create_roles() {
+	public static function create_roles() {
 		global $wp_roles;
 
 		if ( class_exists( 'WP_Roles' ) ) {
@@ -491,7 +420,7 @@ class WC_Install {
 				'list_users'             => true
 			) );
 
-			$capabilities = $this->get_core_capabilities();
+			$capabilities = self::get_core_capabilities();
 
 			foreach ( $capabilities as $cap_group ) {
 				foreach ( $cap_group as $cap ) {
@@ -508,7 +437,7 @@ class WC_Install {
 	 * @access public
 	 * @return array
 	 */
-	public function get_core_capabilities() {
+	public static function get_core_capabilities() {
 		$capabilities = array();
 
 		$capabilities['core'] = array(
@@ -553,7 +482,7 @@ class WC_Install {
 	 * @access public
 	 * @return void
 	 */
-	public function remove_roles() {
+	public static function remove_roles() {
 		global $wp_roles;
 
 		if ( class_exists( 'WP_Roles' ) ) {
@@ -564,7 +493,7 @@ class WC_Install {
 
 		if ( is_object( $wp_roles ) ) {
 
-			$capabilities = $this->get_core_capabilities();
+			$capabilities = self::get_core_capabilities();
 
 			foreach ( $capabilities as $cap_group ) {
 				foreach ( $cap_group as $cap ) {
@@ -581,7 +510,7 @@ class WC_Install {
 	/**
 	 * Create files/directories
 	 */
-	private function create_files() {
+	private static function create_files() {
 		// Install files and folders for uploading files and prevent hotlinking
 		$upload_dir =  wp_upload_dir();
 
@@ -621,7 +550,7 @@ class WC_Install {
 	/**
 	 * Create CSS from LESS file
 	 */
-	private function create_css_from_less() {
+	private static function create_css_from_less() {
 		// Recompile LESS styles if they are custom
 		if ( get_option( 'woocommerce_frontend_css' ) == 'yes' ) {
 
@@ -638,30 +567,11 @@ class WC_Install {
 	}
 
 	/**
-	 * Active plugins pre update option filter
-	 *
-	 * @param string $new_value
-	 * @return string
-	 */
-	function pre_update_option_active_plugins( $new_value ) {
-		$old_value = (array) get_option( 'active_plugins' );
-
-		if ( $new_value !== $old_value && in_array( W3TC_FILE, (array) $new_value ) && in_array( W3TC_FILE, (array) $old_value ) ) {
-			$this->_config->set( 'notes.plugins_updated', true );
-			try {
-				$this->_config->save();
-			} catch( Exception $ex ) {}
-		}
-
-		return $new_value;
-	}
-
-	/**
 	 * Show plugin changes. Code adapted from W3 Total Cache.
 	 *
 	 * @return void
 	 */
-	function in_plugin_update_message() {
+	public static function in_plugin_update_message() {
 		$response = wp_remote_get( 'http://plugins.svn.wordpress.org/woocommerce/trunk/readme.txt' );
 
 		if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
@@ -719,7 +629,3 @@ class WC_Install {
 		}
 	}
 }
-
-endif;
-
-return new WC_Install();

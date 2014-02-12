@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Permalink_Settings' ) ) :
-
 /**
  * WC_Admin_Permalink_Settings Class
  */
@@ -188,6 +186,4 @@ class WC_Admin_Permalink_Settings {
 	}
 }
 
-endif;
-
-return new WC_Admin_Permalink_Settings();
+new WC_Admin_Permalink_Settings();

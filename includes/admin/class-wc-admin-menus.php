@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Menus' ) ) :
-
 /**
  * WC_Admin_Menus Class
  */
@@ -188,8 +186,8 @@ class WC_Admin_Menus {
 	 * Init the reports page
 	 */
 	public function reports_page() {
-		$page = include( 'class-wc-admin-reports.php' );
-		$page->output();
+		include_once( 'class-wc-admin-reports.php' );
+		WC_Admin_Reports::output();
 	}
 
 	/**
@@ -204,27 +202,25 @@ class WC_Admin_Menus {
 	 * Init the attributes page
 	 */
 	public function attributes_page() {
-		$page = include( 'class-wc-admin-attributes.php' );
-		$page->output();
+		include_once( 'class-wc-admin-attributes.php' );
+		WC_Admin_Attributes::output();
 	}
 
 	/**
 	 * Init the status page
 	 */
 	public function status_page() {
-		$page = include( 'class-wc-admin-status.php' );
-		$page->output();
+		include_once( 'class-wc-admin-status.php' );
+		WC_Admin_Status::output();
 	}
 
 	/**
 	 * Init the addons page
 	 */
 	public function addons_page() {
-		$page = include( 'class-wc-admin-addons.php' );
-		$page->output();
+		include_once( 'class-wc-admin-addons.php' );
+		WC_Admin_Addons::output();
 	}
 }
 
-endif;
-
-return new WC_Admin_Menus();
+new WC_Admin_Menus();

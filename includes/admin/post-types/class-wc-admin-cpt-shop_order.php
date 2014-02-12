@@ -14,10 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'WC_Admin_CPT' ) ) {
-	include( 'class-wc-admin-cpt.php' );
+	include_once( 'class-wc-admin-cpt.php' );
 }
-
-if ( ! class_exists( 'WC_Admin_CPT_Shop_Order' ) ) :
 
 /**
  * WC_Admin_CPT_Shop_Order Class
@@ -764,6 +762,4 @@ class WC_Admin_CPT_Shop_Order extends WC_Admin_CPT {
 
 }
 
-endif;
-
-return new WC_Admin_CPT_Shop_Order();
+new WC_Admin_CPT_Shop_Order();

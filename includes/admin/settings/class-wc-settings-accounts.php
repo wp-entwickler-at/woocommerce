@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Settings_Accounts' ) ) :
-
 /**
  * WC_Settings_Accounts
  */
@@ -156,7 +154,3 @@ class WC_Settings_Accounts extends WC_Settings_Page {
 		)); // End pages settings
 	}
 }
-
-endif;
-
-return new WC_Settings_Accounts();

@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Assets' ) ) :
-
 /**
  * WC_Admin_Assets Class
  */
@@ -277,6 +275,4 @@ class WC_Admin_Assets {
 	}
 }
 
-endif;
-
-return new WC_Admin_Assets();
+new WC_Admin_Assets();

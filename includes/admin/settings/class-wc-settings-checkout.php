@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Settings_Payment_Gateways' ) ) :
-
 /**
  * WC_Settings_Payment_Gateways
  */
@@ -316,7 +314,3 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 		}
 	}
 }
-
-endif;
-
-return new WC_Settings_Payment_Gateways();

@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Admin_Duplicate_Product' ) ) :
-
 /**
  * WC_Admin_Duplicate_Product Class
  */
@@ -234,6 +232,4 @@ class WC_Admin_Duplicate_Product {
 
 }
 
-endif;
-
-return new WC_Admin_Duplicate_Product();
+new WC_Admin_Duplicate_Product();

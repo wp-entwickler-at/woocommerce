@@ -10,8 +10,6 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'WC_Settings_Integrations' ) ) :
-
 /**
  * WC_Settings_Integrations
  */
@@ -68,7 +66,3 @@ class WC_Settings_Integrations extends WC_Settings_Page {
 			$integrations[ $current_section ]->admin_options();
 	}
 }
-
-endif;
-
-return new WC_Settings_Integrations();
