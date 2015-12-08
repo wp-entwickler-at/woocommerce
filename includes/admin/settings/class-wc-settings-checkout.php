@@ -2,18 +2,20 @@
 /**
  * WooCommerce Shipping Settings
  *
- * @author 		WooThemes
- * @category 	Admin
- * @package 	WooCommerce/Admin
+ * @author      WooThemes
+ * @category    Admin
+ * @package     WooCommerce/Admin
  * @version     2.1.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 if ( ! class_exists( 'WC_Settings_Payment_Gateways' ) ) :
 
 /**
- * WC_Settings_Payment_Gateways
+ * WC_Settings_Payment_Gateways.
  */
 class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 
@@ -21,6 +23,7 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 	 * Constructor.
 	 */
 	public function __construct() {
+
 		$this->id    = 'checkout';
 		$this->label = _x( 'Checkout', 'Settings tab label', 'woocommerce' );
 
@@ -32,114 +35,125 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 	}
 
 	/**
-	 * Get sections
+	 * Get sections.
 	 *
 	 * @return array
 	 */
 	public function get_sections() {
 		$sections = array(
-			''         => __( 'Checkout Options', 'woocommerce' )
+			'' => __( 'Checkout Options', 'woocommerce' )
 		);
 
-		// Load shipping methods so we can show any global options they may have
-		$payment_gateways = WC()->payment_gateways->payment_gateways();
+		if ( ! defined( 'WC_INSTALLING' ) ) {
+			// Load shipping methods so we can show any global options they may have
+			$payment_gateways = WC()->payment_gateways->payment_gateways();
 
-		foreach ( $payment_gateways as $gateway ) {
-
-			$title = empty( $gateway->method_title ) ? ucfirst( $gateway->id ) : $gateway->method_title;
-
-			$sections[ strtolower( get_class( $gateway ) ) ] = esc_html( $title );
+			foreach ( $payment_gateways as $gateway ) {
+				$title = empty( $gateway->method_title ) ? ucfirst( $gateway->id ) : $gateway->method_title;
+				$sections[ strtolower( get_class( $gateway ) ) ] = esc_html( $title );
+			}
 		}
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
 	}
 
 	/**
-	 * Get settings array
+	 * Get settings array.
 	 *
 	 * @return array
 	 */
 	public function get_settings() {
-		return apply_filters( 'woocommerce_payment_gateways_settings', array(
+		$settings = apply_filters( 'woocommerce_payment_gateways_settings', array(
 
 			array(	'title' => __( 'Checkout Process', 'woocommerce' ), 'type' => 'title', 'id' => 'checkout_process_options' ),
 
 			array(
-				'title' => __( 'Coupons', 'woocommerce' ),
+				'title'         => __( 'Coupons', 'woocommerce' ),
 				'desc'          => __( 'Enable the use of coupons', 'woocommerce' ),
 				'id'            => 'woocommerce_enable_coupons',
 				'default'       => 'yes',
 				'type'          => 'checkbox',
-				'desc_tip'		=>  __( 'Coupons can be applied from the cart and checkout pages.', 'woocommerce' ),
+				'checkboxgroup' => 'start',
+				'desc_tip'      =>  __( 'Coupons can be applied from the cart and checkout pages.', 'woocommerce' ),
 				'autoload'      => false
 			),
 
 			array(
-				'title' => __( 'Checkout', 'woocommerce' ),
-				'desc' 		=> __( 'Enable guest checkout', 'woocommerce' ),
-				'desc_tip'	=>  __( 'Allows customers to checkout without creating an account.', 'woocommerce' ),
-				'id' 		=> 'woocommerce_enable_guest_checkout',
-				'default'	=> 'yes',
-				'type' 		=> 'checkbox',
-				'checkboxgroup'	=> 'start',
-				'autoload'  => false
+				'desc'          => __( 'Calculate coupon discounts sequentially', 'woocommerce' ),
+				'id'            => 'woocommerce_calc_discounts_sequentially',
+				'default'       => 'no',
+				'type'          => 'checkbox',
+				'desc_tip'      =>  __( 'When applying multiple coupons, apply the first coupon to the full price and the second coupon to the discounted price and so on.', 'woocommerce' ),
+				'checkboxgroup' => 'end',
+				'autoload'      => false
 			),
 
 			array(
-				'desc' 		=> __( 'Force secure checkout', 'woocommerce' ),
-				'id' 		=> 'woocommerce_force_ssl_checkout',
-				'default'	=> 'no',
-				'type' 		=> 'checkbox',
-				'checkboxgroup'		=> '',
+				'title'         => _x( 'Checkout', 'Settings group label', 'woocommerce' ),
+				'desc'          => __( 'Enable guest checkout', 'woocommerce' ),
+				'desc_tip'      =>  __( 'Allows customers to checkout without creating an account.', 'woocommerce' ),
+				'id'            => 'woocommerce_enable_guest_checkout',
+				'default'       => 'yes',
+				'type'          => 'checkbox',
+				'checkboxgroup' => 'start',
+				'autoload'      => false
+			),
+
+			array(
+				'desc'            => __( 'Force secure checkout', 'woocommerce' ),
+				'id'              => 'woocommerce_force_ssl_checkout',
+				'default'         => 'no',
+				'type'            => 'checkbox',
+				'checkboxgroup'   => '',
 				'show_if_checked' => 'option',
-				'desc_tip'	=>  __( 'Force SSL (HTTPS) on the checkout pages (an SSL Certificate is required).', 'woocommerce' ),
+				'desc_tip'        => __( 'Force SSL (HTTPS) on the checkout pages (a SSL Certificate is required).', 'woocommerce' ),
 			),
 
 			array(
-				'desc' 		=> __( 'Un-force HTTPS when leaving the checkout', 'woocommerce' ),
-				'id' 		=> 'woocommerce_unforce_ssl_checkout',
-				'default'	=> 'no',
-				'type' 		=> 'checkbox',
-				'checkboxgroup'		=> 'end',
+				'desc'            => __( 'Force HTTP when leaving the checkout', 'woocommerce' ),
+				'id'              => 'woocommerce_unforce_ssl_checkout',
+				'default'         => 'no',
+				'type'            => 'checkbox',
+				'checkboxgroup'   => 'end',
 				'show_if_checked' => 'yes',
 			),
 
 			array( 'type' => 'sectionend', 'id' => 'checkout_process_options'),
 
-			array(	'title' => __( 'Checkout Pages', 'woocommerce' ), 'desc' => __( 'These pages need to be set so that WooCommerce knows where to send users to checkout.', 'woocommerce' ), 'type' => 'title', 'id' => 'checkout_page_options' ),
+			array( 'title' => __( 'Checkout Pages', 'woocommerce' ), 'desc' => __( 'These pages need to be set so that WooCommerce knows where to send users to checkout.', 'woocommerce' ), 'type' => 'title', 'id' => 'checkout_page_options' ),
 
 			array(
-				'title' => __( 'Cart Page', 'woocommerce' ),
-				'desc' 		=> __( 'Page contents:', 'woocommerce' ) . ' [' . apply_filters( 'woocommerce_cart_shortcode_tag', 'woocommerce_cart' ) . ']',
-				'id' 		=> 'woocommerce_cart_page_id',
-				'type' 		=> 'single_select_page',
-				'default'	=> '',
-				'class'		=> 'chosen_select_nostd',
-				'css' 		=> 'min-width:300px;',
-				'desc_tip'	=> true,
+				'title'    => __( 'Cart Page', 'woocommerce' ),
+				'desc'     => __( 'Page contents:', 'woocommerce' ) . ' [' . apply_filters( 'woocommerce_cart_shortcode_tag', 'woocommerce_cart' ) . ']',
+				'id'       => 'woocommerce_cart_page_id',
+				'type'     => 'single_select_page',
+				'default'  => '',
+				'class'    => 'wc-enhanced-select-nostd',
+				'css'      => 'min-width:300px;',
+				'desc_tip' => true,
 			),
 
 			array(
-				'title' => __( 'Checkout Page', 'woocommerce' ),
-				'desc' 		=> __( 'Page contents:', 'woocommerce' ) . ' [' . apply_filters( 'woocommerce_checkout_shortcode_tag', 'woocommerce_checkout' ) . ']',
-				'id' 		=> 'woocommerce_checkout_page_id',
-				'type' 		=> 'single_select_page',
-				'default'	=> '',
-				'class'		=> 'chosen_select_nostd',
-				'css' 		=> 'min-width:300px;',
-				'desc_tip'	=> true,
+				'title'    => __( 'Checkout Page', 'woocommerce' ),
+				'desc'     => __( 'Page contents:', 'woocommerce' ) . ' [' . apply_filters( 'woocommerce_checkout_shortcode_tag', 'woocommerce_checkout' ) . ']',
+				'id'       => 'woocommerce_checkout_page_id',
+				'type'     => 'single_select_page',
+				'default'  => '',
+				'class'    => 'wc-enhanced-select-nostd',
+				'css'      => 'min-width:300px;',
+				'desc_tip' => true,
 			),
 
 			array(
-				'title' => __( 'Terms and Conditions', 'woocommerce' ),
-				'desc' 		=> __( 'If you define a "Terms" page the customer will be asked if they accept them when checking out.', 'woocommerce' ),
-				'id' 		=> 'woocommerce_terms_page_id',
-				'default'	=> '',
-				'class'		=> 'chosen_select_nostd',
-				'css' 		=> 'min-width:300px;',
-				'type' 		=> 'single_select_page',
-				'desc_tip'	=> true,
-				'autoload'  => false
+				'title'    => __( 'Terms and Conditions', 'woocommerce' ),
+				'desc'     => __( 'If you define a "Terms" page the customer will be asked if they accept them when checking out.', 'woocommerce' ),
+				'id'       => 'woocommerce_terms_page_id',
+				'default'  => '',
+				'class'    => 'wc-enhanced-select-nostd',
+				'css'      => 'min-width:300px;',
+				'type'     => 'single_select_page',
+				'desc_tip' => true,
+				'autoload' => false
 			),
 
 			array( 'type' => 'sectionend', 'id' => 'checkout_page_options' ),
@@ -147,21 +161,21 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 			array( 'title' => __( 'Checkout Endpoints', 'woocommerce' ), 'type' => 'title', 'desc' => __( 'Endpoints are appended to your page URLs to handle specific actions during the checkout process. They should be unique.', 'woocommerce' ), 'id' => 'account_endpoint_options' ),
 
 			array(
-				'title' => __( 'Pay', 'woocommerce' ),
-				'desc' 		=> __( 'Endpoint for the Checkout &rarr; Pay page', 'woocommerce' ),
-				'id' 		=> 'woocommerce_checkout_pay_endpoint',
-				'type' 		=> 'text',
-				'default'	=> 'order-pay',
-				'desc_tip'	=> true,
+				'title'    => __( 'Pay', 'woocommerce' ),
+				'desc'     => __( 'Endpoint for the Checkout &rarr; Pay page', 'woocommerce' ),
+				'id'       => 'woocommerce_checkout_pay_endpoint',
+				'type'     => 'text',
+				'default'  => 'order-pay',
+				'desc_tip' => true,
 			),
 
 			array(
-				'title' => __( 'Order Received', 'woocommerce' ),
-				'desc' 		=> __( 'Endpoint for the Checkout &rarr; Pay page', 'woocommerce' ),
-				'id' 		=> 'woocommerce_checkout_order_received_endpoint',
-				'type' 		=> 'text',
-				'default'	=> 'order-received',
-				'desc_tip'	=> true,
+				'title'    => __( 'Order Received', 'woocommerce' ),
+				'desc'     => __( 'Endpoint for the Checkout &rarr; Order Received page', 'woocommerce' ),
+				'id'       => 'woocommerce_checkout_order_received_endpoint',
+				'type'     => 'text',
+				'default'  => 'order-received',
+				'desc_tip' => true,
 			),
 
 			array(
@@ -181,11 +195,13 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 
 			array( 'type' => 'sectionend', 'id' => 'payment_gateways_options' ),
 
-		)); // End payment_gateway settings
+		) );
+
+		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings );
 	}
 
 	/**
-	 * Output the settings
+	 * Output the settings.
 	 */
 	public function output() {
 		global $current_section;
@@ -194,7 +210,9 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
 
 		if ( $current_section ) {
+
  			foreach ( $payment_gateways as $gateway ) {
+
 				if ( strtolower( get_class( $gateway ) ) == strtolower( $current_section ) ) {
 					$gateway->admin_options();
 					break;
@@ -209,25 +227,21 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 
 	/**
 	 * Output payment gateway settings.
-	 *
-	 * @access public
-	 * @return void
 	 */
 	public function payment_gateways_setting() {
 		?>
 		<tr valign="top">
-			<th scope="row" class="titledesc"><?php _e( 'Gateway Display', 'woocommerce' ) ?></th>
+			<th scope="row" class="titledesc"><?php _e( 'Gateway Display Order', 'woocommerce' ) ?></th>
 		    <td class="forminp">
 				<table class="wc_gateways widefat" cellspacing="0">
 					<thead>
 						<tr>
 							<?php
 								$columns = apply_filters( 'woocommerce_payment_gateways_setting_columns', array(
-									'default'  => __( 'Default', 'woocommerce' ),
+									'sort'     => '',
 									'name'     => __( 'Gateway', 'woocommerce' ),
 									'id'       => __( 'Gateway ID', 'woocommerce' ),
-									'status'   => __( 'Status', 'woocommerce' ),
-									'settings' => ''
+									'status'   => __( 'Enabled', 'woocommerce' )
 								) );
 
 								foreach ( $columns as $key => $column ) {
@@ -237,46 +251,44 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 						</tr>
 					</thead>
 					<tbody>
-			        	<?php
-			        	$default_gateway = get_option( 'woocommerce_default_gateway' );
+						<?php
+						foreach ( WC()->payment_gateways->payment_gateways() as $gateway ) {
 
-			        	foreach ( WC()->payment_gateways->payment_gateways() as $gateway ) {
+							echo '<tr>';
 
-			        		echo '<tr>';
+							foreach ( $columns as $key => $column ) {
 
-			        		foreach ( $columns as $key => $column ) {
 								switch ( $key ) {
-									case 'default' :
-										echo '<td width="1%" class="default">
-					        				<input type="radio" name="default_gateway" value="' . esc_attr( $gateway->id ) . '" ' . checked( $default_gateway, esc_attr( $gateway->id ), false ) . ' />
-					        				<input type="hidden" name="gateway_order[]" value="' . esc_attr( $gateway->id ) . '" />
-					        			</td>';
+
+									case 'sort' :
+										echo '<td width="1%" class="sort">
+											<input type="hidden" name="gateway_order[]" value="' . esc_attr( $gateway->id ) . '" />
+										</td>';
 									break;
+
 									case 'name' :
 										echo '<td class="name">
-					        				' . $gateway->get_title() . '
-					        			</td>';
+											<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $gateway ) ) ) . '">' . $gateway->get_title() . '</a>
+										</td>';
 									break;
+
 									case 'id' :
 										echo '<td class="id">
-					        				' . esc_html( $gateway->id ) . '
-					        			</td>';
+											' . esc_html( $gateway->id ) . '
+										</td>';
 									break;
+
 									case 'status' :
 										echo '<td class="status">';
 
-						        		if ( $gateway->enabled == 'yes' )
-						        			echo '<span class="status-enabled tips" data-tip="' . __ ( 'Enabled', 'woocommerce' ) . '">' . __ ( 'Enabled', 'woocommerce' ) . '</span>';
-						        		else
-						        			echo '-';
+										if ( $gateway->enabled == 'yes' )
+											echo '<span class="status-enabled tips" data-tip="' . __ ( 'Yes', 'woocommerce' ) . '">' . __ ( 'Yes', 'woocommerce' ) . '</span>';
+										else
+											echo '-';
 
-						        		echo '</td>';
+										echo '</td>';
 									break;
-									case 'settings' :
-										echo '<td class="settings">
-					        				<a class="button" href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . strtolower( get_class( $gateway ) ) ) . '">' . __( 'Settings', 'woocommerce' ) . '</a>
-					        			</td>';
-									break;
+
 									default :
 										do_action( 'woocommerce_payment_gateways_setting_column_' . $key, $gateway );
 									break;
@@ -284,8 +296,8 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 							}
 
 							echo '</tr>';
-			        	}
-			        	?>
+						}
+						?>
 					</tbody>
 				</table>
 			</td>
@@ -294,25 +306,24 @@ class WC_Settings_Payment_Gateways extends WC_Settings_Page {
 	}
 
 	/**
-	 * Save settings
+	 * Save settings.
 	 */
 	public function save() {
 		global $current_section;
 
+		$wc_payment_gateways = WC_Payment_Gateways::instance();
+
 		if ( ! $current_section ) {
+			WC_Admin_Settings::save_fields( $this->get_settings() );
+			$wc_payment_gateways->process_admin_options();
 
-			$settings = $this->get_settings();
-
-			WC_Admin_Settings::save_fields( $settings );
-			WC()->payment_gateways->process_admin_options();
-
-		} elseif ( class_exists( $current_section ) ) {
-
-			$current_section_class = new $current_section();
-
-			do_action( 'woocommerce_update_options_payment_gateways_' . $current_section_class->id );
-
-			WC()->payment_gateways()->init();
+		} else {
+			foreach ( $wc_payment_gateways->payment_gateways() as $gateway ) {
+				if ( $current_section === sanitize_title( get_class( $gateway ) ) ) {
+					do_action( 'woocommerce_update_options_payment_gateways_' . $gateway->id );
+					$wc_payment_gateways->init();
+				}
+			}
 		}
 	}
 }

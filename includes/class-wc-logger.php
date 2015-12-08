@@ -1,6 +1,11 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 /**
- * Allows log files to be written to for debugging purposes.
+ * Allows log files to be written to for debugging purposes
  *
  * @class 		WC_Logger
  * @version		1.6.4
@@ -18,9 +23,6 @@ class WC_Logger {
 
 	/**
 	 * Constructor for the logger.
-	 *
-	 * @access public
-	 * @return void
 	 */
 	public function __construct() {
 		$this->_handles = array();
@@ -29,13 +31,11 @@ class WC_Logger {
 
 	/**
 	 * Destructor.
-	 *
-	 * @access public
-	 * @return void
 	 */
 	public function __destruct() {
-		foreach ( $this->_handles as $handle )
-	       @fclose( escapeshellarg( $handle ) );
+		foreach ( $this->_handles as $handle ) {
+			@fclose( $handle );
+		}
 	}
 
 
@@ -47,12 +47,13 @@ class WC_Logger {
 	 * @return bool success
 	 */
 	private function open( $handle ) {
-
-		if ( isset( $this->_handles[ $handle ] ) )
+		if ( isset( $this->_handles[ $handle ] ) ) {
 			return true;
+		}
 
-		if ( $this->_handles[ $handle ] = @fopen( WC()->plugin_path() . '/logs/' . $this->file_name( $handle ) . '.txt', 'a' ) )
+		if ( $this->_handles[ $handle ] = @fopen( wc_get_log_file_path( $handle ), 'a' ) ) {
 			return true;
+		}
 
 		return false;
 	}
@@ -61,42 +62,30 @@ class WC_Logger {
 	/**
 	 * Add a log entry to chosen file.
 	 *
-	 * @access public
-	 * @param mixed $handle
-	 * @param mixed $message
-	 * @return void
+	 * @param string $handle
+	 * @param string $message
 	 */
 	public function add( $handle, $message ) {
 		if ( $this->open( $handle ) && is_resource( $this->_handles[ $handle ] ) ) {
-			$time = date_i18n( 'm-d-Y @ H:i:s -' ); //Grab Time
+			$time = date_i18n( 'm-d-Y @ H:i:s -' ); // Grab Time
 			@fwrite( $this->_handles[ $handle ], $time . " " . $message . "\n" );
 		}
+
+		do_action( 'woocommerce_log_add', $handle, $message );
 	}
 
 
 	/**
 	 * Clear entries from chosen file.
 	 *
-	 * @access public
 	 * @param mixed $handle
-	 * @return void
 	 */
 	public function clear( $handle ) {
-
-		if ( $this->open( $handle ) && is_resource( $this->_handles[ $handle ] ) )
+		if ( $this->open( $handle ) && is_resource( $this->_handles[ $handle ] ) ) {
 			@ftruncate( $this->_handles[ $handle ], 0 );
-	}
+		}
 
-
-	/**
-	 * file_name function.
-	 *
-	 * @access private
-	 * @param mixed $handle
-	 * @return string
-	 */
-	private function file_name( $handle ) {
-		return $handle . '-' . sanitize_file_name( wp_hash( $handle ) );
+		do_action( 'woocommerce_log_clear', $handle );
 	}
 
 }

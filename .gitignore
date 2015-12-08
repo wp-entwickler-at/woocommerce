@@ -1,16 +1,30 @@
-/nbproject/private/
-/node_modules/
+# Editors
 project.xml
 project.properties
-.DS_Store
-Thumbs.db
+/nbproject/private/
 .buildpath
 .project
 .settings*
-sftp-config.json
-/deploy/
+.idea
+
+# Grunt
+/node_modules/
+
+# Sass
+.sass-cache/
+
+# OS X metadata
+.DS_Store
+
+# Windows junk
+Thumbs.db
+
+# ApiGen
 /wc-apidocs/
 
-# Ignore all log files except for .htaccess
-/logs/*
-!/logs/.htaccess
+# Unit tests
+/tmp
+/tests/bin/tmp
+
+# Logs
+/logs
